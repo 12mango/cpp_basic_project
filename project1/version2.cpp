@@ -5,14 +5,18 @@
 #define IllegalInputNumber 1
 #define UnknownNumber 2
 
+bool A_gt_B();
+void A_plus_B();
+void A_minus_B();
 int checkValue(int val);
 int getValue(char ch);
 char outputValue(int val);
 void raiseError(int err);
 
 std::string charA, charB;
-std::vector<int> numA, numB, numC, numD;
+std::vector<int> numA, numB, numC, numD, tmp;
 int lengthA, lengthB, lengthC, carry;
+int signA, signB, signC, signD;
 int inBase = 10, outBase = 10;
 
 int main(int argc, char* argv[]){
@@ -26,6 +30,13 @@ int main(int argc, char* argv[]){
 	
 	std::cin >> charA >> charB;
 	
+	if(charA[0] == '-'){
+		signA = 1;
+	}
+	if(charB[0] == '-'){
+		signB = 1;
+	}
+	
 	//字符转整数 
 	for(auto ch : charA){
 		numA.push_back(getValue(ch));
@@ -38,7 +49,7 @@ int main(int argc, char* argv[]){
 	reverse(numA.begin(), numA.end());
 	reverse(numB.begin(), numB.end());
 	
-	//给较短的数字补0 方便做加法 
+	//给较短的数字补0 方便运算 
 	while(numA.size() < numB.size()){
 		numA.push_back(0);
 	}
@@ -46,13 +57,41 @@ int main(int argc, char* argv[]){
 		numB.push_back(0);
 	}
 	
-	for(int i = 0; i < numA.size(); ++i){
-		numC.push_back(numA[i] + numB[i] + carry);
-		carry = numC[i] / inBase;
-		numC[i] %= inBase;
+	//分类讨论 
+	
+	//A和B只有一个为负 
+	if(signA + signB < 2){
+			
+		//B为负 交换保证负数在前 
+		if(signB){
+			numA.swap(numB);
+			std::swap(signA,signB);	
+		}
+
+		//一负一正 做减法
+		if(signA){
+			
+			//负数大 结果为负 
+			if(A_gt_B()){
+				signC = 1;
+				A_minus_B();
+			}
+			else{
+				numA.swap(numB);
+				A_minus_B();
+			}
+		}
+		else{
+			A_plus_B();
+		}
+	}
+	//A B均为负 
+	else{
+		signC = 1;
+		A_plus_B();
 	}
 	
-	//处理前导0，输出 
+	//处理前导0
 	numC.push_back(carry);
 	while((numC.size() > 1) && (numC.back() == 0)){
 		numC.pop_back();
@@ -73,9 +112,14 @@ int main(int argc, char* argv[]){
 			numC.pop_back();
 		}
 	}
-	
+	signD = signC;
+		
 	//高位在前
 	reverse(numD.begin(), numD.end());
+	
+	if(signD){
+		std::cout << "-";
+	}
 	
 	for(auto val : numD){
 		std::cout << outputValue(val);
@@ -91,10 +135,40 @@ int checkValue(int val){
 	return val;
 }
 
+bool A_gt_B(){
+	 for(int i = 0; i < numA.size(); ++i){
+	 	if(numA[i] > numB[i]){
+	 		return true;
+	 	}
+	 	else if(numA[i] < numB[i]){
+	 		return false;
+	 	}
+	 }
+	 return false;
+}
+
+void A_plus_B(){
+	for(int i = 0; i < numA.size(); ++i){
+		numC.push_back(numA[i] + numB[i] + carry);
+		carry = numC[i] / inBase;
+		numC[i] %= inBase;
+	}
+}
+
+void A_minus_B(){
+	for(int i = 0; i < numA.size(); ++i){
+		if(numA[i] < numB[i]){
+			numA[i] += inBase;
+			numA[i+1]--;
+		}
+		numC.push_back(numA[i] - numB[i]);
+	}
+}
+
 //字符转数字 
 int getValue(char ch){
 	//处理加号
-	if(ch == '+'){
+	if((ch == '+') || (ch == '-')){
 		return checkValue(0);
 	}
 	if((ch >= '0') && (ch <= '9')){

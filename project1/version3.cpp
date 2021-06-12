@@ -2,17 +2,30 @@
 typedef long long ll;
 const int base=1e8;
 using namespace std;
+
 char a[100010],b[100010],c[100010];
 int inBase=10;
+
 struct Bigint
 {
 	vector<ll>val;
+	int sign;
+	
 	void clear(){while(!val.back()&&val.size()>1) val.pop_back();}
 	Bigint(){
+		sign=0;
 		val.clear();
 		val.resize(1,0);
 	}
 	Bigint(char *str){
+		sign=0;
+		if(str[0]=='-'){
+			sign=1;
+			str[0]='0';
+		}
+		if(str[0]=='+'){
+			str[0]='0';
+		}
 		int len=strlen(str);
 		int ret=0,b=1;
 		for(int i=len-1;i>=0;i--){
@@ -35,6 +48,32 @@ struct Bigint
 	Bigint operator=(const ll a){return Bigint(a);}
 	Bigint operator+(Bigint b){
 		Bigint a=*this,c;
+
+		if(a.sign+b.sign<2){
+			if(b.sign){
+				c=a,a=b,b=c;
+			}
+			if(a.sign){
+				if(a>b){
+					c=a-b;
+					c.sign=1;
+					return c;
+				}
+				else{
+					c=b-a;
+					c.sign=0;
+					return c;
+				}
+			}
+			//else{
+			//	c=a+b;
+			//}
+		}
+		else{
+			c.sign=1;
+			//c=a+b;
+		}
+		
 		int len1=a.val.size();
 		int len2=b.val.size();
 		int len3=max(len1,len2) + 1;
@@ -101,6 +140,9 @@ struct Bigint
 		return a.cmp(b)>0;
 	}
 	void output(){
+		if(sign){
+			cout<<"-";
+		}
 		int len=val.size();
 		printf("%d",val[len-1]);
 		for(int i=len-2;i>=0;i--)
@@ -112,8 +154,10 @@ int main()
 {
 	scanf("%s",a);
 	scanf("%s",b);
+
 	Bigint A=Bigint(a),B=Bigint(b),C;
 	C=A+B;
 	C.output();
+
 	return 0;
 }
