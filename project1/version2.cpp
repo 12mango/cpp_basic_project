@@ -21,8 +21,10 @@ int inBase = 10, outBase = 10;
 
 int main(int argc, char* argv[]){
 	
-	inBase = atoi(argv[1]);
-	outBase = atoi(argv[2]);
+	freopen(argv[1],"r",stdin);
+	
+	inBase = atoi(argv[2]);
+	outBase = atoi(argv[3]);
 	
 	if((inBase < 2) || (inBase > 36) || (outBase < 2) || (outBase > 36)){
 		raiseError(IllegalBaseError);
@@ -136,7 +138,7 @@ int checkValue(int val){
 }
 
 bool A_gt_B(){
-	 for(int i = 0; i < numA.size(); ++i){
+	 for(int i = numA.size() - 1; i >= 0; ++i){
 	 	if(numA[i] > numB[i]){
 	 		return true;
 	 	}

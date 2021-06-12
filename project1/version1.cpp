@@ -17,8 +17,10 @@ int inBase = 10, outBase = 10;
 
 int main(int argc, char* argv[]){
 	
-	inBase = atoi(argv[1]);
-	//outBase = atoi(argv[2]);
+	freopen(argv[1],"r",stdin);
+	
+	inBase = atoi(argv[2]);
+	//outBase = atoi(argv[3]);
 	outBase = inBase;
 	
 	if((inBase < 2) || (inBase > 36) || (outBase < 2) || (outBase > 36)){
