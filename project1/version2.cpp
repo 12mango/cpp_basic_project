@@ -11,6 +11,7 @@ void A_minus_B();
 int checkValue(int val);
 int getValue(char ch);
 char outputValue(int val);
+void popZero(std::vector<int>&vec);
 void raiseError(int err);
 
 std::string charA, charB;
@@ -51,6 +52,10 @@ int main(int argc, char* argv[]){
 	reverse(numA.begin(), numA.end());
 	reverse(numB.begin(), numB.end());
 	
+	//先去除前导0
+	popZero(numA);
+	popZero(numB); 
+	
 	//给较短的数字补0 方便运算 
 	while(numA.size() < numB.size()){
 		numA.push_back(0);
@@ -61,43 +66,27 @@ int main(int argc, char* argv[]){
 	
 	//分类讨论 
 	
-	//A和B只有一个为负 
-	if(signA + signB < 2){
-			
-		//B为负 交换保证负数在前 
-		if(signB){
-			numA.swap(numB);
-			std::swap(signA,signB);	
-		}
-
-		//一负一正 做减法
-		if(signA){
-			
-			//负数大 结果为负 
-			if(A_gt_B()){
-				signC = 1;
-				A_minus_B();
-			}
-			else{
-				numA.swap(numB);
-				A_minus_B();
-			}
+	//A和B同号 
+	if(signA == signB){
+		signC = signA;
+		A_plus_B();
+	}
+	else{
+		//异号 
+		if(A_gt_B()){
+			signC = signA;
+			A_minus_B();
 		}
 		else{
-			A_plus_B();
+			signC = signB;
+			numA.swap(numB);
 		}
-	}
-	//A B均为负 
-	else{
-		signC = 1;
-		A_plus_B();
+		A_minus_B();
 	}
 	
 	//处理前导0
 	numC.push_back(carry);
-	while((numC.size() > 1) && (numC.back() == 0)){
-		numC.pop_back();
-	}
+	popZero(numC);
 	
 	//转换进制 模拟短除法 
 	while(numC.size()){
@@ -191,6 +180,12 @@ char outputValue(int val){
 		return val + 'A' - 10;
 	}
 	return val + '0';
+}
+
+void popZero(std::vector<int>&vec){
+	while((vec.size() > 1) && (vec.back() == 0)){
+		vec.pop_back();
+	}
 }
 
 void raiseError(int err){

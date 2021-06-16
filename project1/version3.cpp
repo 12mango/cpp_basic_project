@@ -11,12 +11,16 @@ struct Bigint
 	vector<ll>val;
 	int sign;
 	
+	//去除前导0 
 	void clear(){while(!val.back()&&val.size()>1) val.pop_back();}
+	
+	//构造函数 
 	Bigint(){
 		sign=0;
 		val.clear();
 		val.resize(1,0);
 	}
+	
 	Bigint(char *str){
 		sign=0;
 		if(str[0]=='-'){
@@ -37,43 +41,19 @@ struct Bigint
 			b*=inBase;
 		} 
 		val.push_back(ret);
+		(*this).clear();
 		return;
 	}
+	
 	Bigint(const ll a){
 		char str[10010];
 		sprintf(str,"%d",a);
 		*this=Bigint(str);
 	}
-	Bigint operator=(char*str){return Bigint(str);}
-	Bigint operator=(const ll a){return Bigint(a);}
-	Bigint operator+(Bigint b){
-		Bigint a=*this,c;
-
-		if(a.sign+b.sign<2){
-			if(b.sign){
-				c=a,a=b,b=c;
-			}
-			if(a.sign){
-				if(a>b){
-					c=a-b;
-					c.sign=1;
-					return c;
-				}
-				else{
-					c=b-a;
-					c.sign=0;
-					return c;
-				}
-			}
-			//else{
-			//	c=a+b;
-			//}
-		}
-		else{
-			c.sign=1;
-			//c=a+b;
-		}
-		
+	
+	//真正的加减法运算 
+	Bigint plus(Bigint a,Bigint b){
+		Bigint c;
 		int len1=a.val.size();
 		int len2=b.val.size();
 		int len3=max(len1,len2) + 1;
@@ -89,8 +69,9 @@ struct Bigint
 		c.clear();
 		return c;
 	}
-	Bigint operator-(Bigint b){
-		Bigint a=*this,c;
+	
+	Bigint minus(Bigint a,Bigint b){
+		Bigint c;
 		int len1=a.val.size();
 		int len2=b.val.size();
 		int len3=len1;
@@ -104,6 +85,40 @@ struct Bigint
 		c.clear();
 		return c;
 	}
+	
+	//重载运算符 
+	Bigint operator=(char*str){return Bigint(str);}
+	
+	Bigint operator=(const ll a){return Bigint(a);}
+	
+	Bigint operator+(Bigint b){
+		Bigint a=*this,c;
+		
+		//分类讨论 
+		if(a.sign==b.sign){
+			c=plus(a,b);
+			c.sign=a.sign;
+		}
+		else{
+			//异号 
+			if(a>b){
+				c=minus(a,b);
+				c.sign=a.sign;
+			}
+			else{
+				c=minus(b,a);
+				c.sign=b.sign;
+			}
+		}
+		return c;
+	}
+	
+	Bigint operator-(Bigint b){
+		Bigint a=*this;
+		b.sign^=1;
+		return a+b;
+	}
+	
 	Bigint operator*(Bigint b){
 		Bigint a=*this,c;
 		int len1=a.val.size();
@@ -120,6 +135,8 @@ struct Bigint
 		c.clear();
 		return c;
 	}
+	
+	//重载比较大小 
 	int cmp(Bigint b)
 	{
 		Bigint a=*this;
@@ -135,10 +152,12 @@ struct Bigint
 		}
 		return 0;
 	}
+	
 	bool operator>(Bigint b){
 		Bigint a=*this;
 		return a.cmp(b)>0;
 	}
+	
 	void output(){
 		if(sign){
 			cout<<"-";
@@ -155,7 +174,7 @@ int main()
 	scanf("%s",a);
 	scanf("%s",b);
 
-	Bigint A=Bigint(a),B=Bigint(b),C;
+	Bigint A=Bigint(a),B=Bigint(b),C,D;
 	C=A+B;
 	C.output();
 
