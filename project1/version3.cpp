@@ -96,6 +96,7 @@ struct Bigint
 		
 		//·ÖÀàÌÖÂÛ 
 		if(a.sign==b.sign){
+			plus(a,b);
 			c=plus(a,b);
 			c.sign=a.sign;
 		}
