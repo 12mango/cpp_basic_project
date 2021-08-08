@@ -1,5 +1,0 @@
-﻿sudoku_ordinary.obj : error LNK2005: "int ans" (?ans@@3HA) 已经在 sudoku_dancingline.obj 中定义
-sudoku_ordinary.obj : error LNK2005: "int cnt" (?cnt@@3HA) 已经在 sudoku_dancingline.obj 中定义
-sudoku_ordinary.obj : error LNK2005: _main 已经在 sudoku_dancingline.obj 中定义
-MSVCRTD.lib(exe_winmain.obj) : error LNK2019: 无法解析的外部符号 _WinMain@16，函数 "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ) 中引用了该符号
-D:\Git\cpp_basic_project\project2\Debug\project2.exe : fatal error LNK1120: 1 个无法解析的外部命令
